@@ -23,5 +23,6 @@
 
 ## Practice
 
+- init npm
 - create `/api/ping` route -> return `{ message: "pong" }`
 - create a table `user` by prisma, and success to read write data
