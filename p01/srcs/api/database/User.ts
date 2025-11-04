@@ -20,10 +20,26 @@ export const User = async (fastify: any) => {
     fastify.get("/user/all", async (req: any, res: any) => {
         console.log("/user/all")
         try {
-            // const allUser = fastify.prisma.user.
+            const users = await fastify.prisma.user.findMany();
+            // console.dir(users);
+            res.send(users);
         }
-        catch {
+        catch (e){
+            console.error(e);
+        }
+    })
 
+    fastify.delete("/user/delete", async (req: any, res: any) => {
+        console.log("/user/delete")
+        try {
+            const id = Number(req.query.id);
+
+            await fastify.prisma.user.delete({where: { id } });
+            console.log("deleted ", id);
+            res.send( {success: true});
+        }
+        catch (e) {
+            console.error(e);
         }
     })
 }
