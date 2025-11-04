@@ -1,4 +1,4 @@
-all: prisma r
+all: up prisma r
 
 r: 
 	cd ./srcs && npm run dev
@@ -14,3 +14,12 @@ up:
 
 check:
 	cd ./srcs && npx prisma studio
+
+init:
+	cd ./srcs && npm install
+
+fclean: down
+	rm -rf pgdata
+	rm -rf ./srcs/generated
+	rm -rf ./srcs/node_modules
+	docker rm $(shell sudo docker ps -qa)
