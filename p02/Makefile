@@ -1,4 +1,7 @@
-all: up prisma r
+all: install up prisma r
+
+install: 
+	cd ./srcs && npm install
 
 r: 
 	cd ./srcs && npm run dev
@@ -25,3 +28,4 @@ fclean: down
 	rm -rf pgdata
 	rm -rf ./srcs/generated
 	rm -rf ./srcs/node_modules
+	rm -rf ./srcs/migrations
