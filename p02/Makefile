@@ -6,6 +6,9 @@ r:
 prisma:
 	cd ./srcs && npm run prisma
 
+prismaclean:
+	cd ./srcs && npm run prismaclean
+
 down:
 	docker compose down
 
@@ -22,4 +25,3 @@ fclean: down
 	rm -rf pgdata
 	rm -rf ./srcs/generated
 	rm -rf ./srcs/node_modules
-	docker rm $(shell sudo docker ps -qa)

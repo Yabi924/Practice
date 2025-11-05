@@ -2,8 +2,18 @@ import fastify from "fastify";
 import prismaPlugin from './plugin/prisma.ts'
 import dotenv from "dotenv";
 import { User } from "./api/database/User.ts";
+import fastifyJwt from "@fastify/jwt";
+import fastifyCookie from "@fastify/cookie";
+import { auth } from "./api/routes/auth.ts";
 
 dotenv.config();
+
+const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
+if (!JWT_SECRET)
+{
+	console.error("env missing: JWT_SECRET");
+	process.exit(1);
+}
 
 async function initServer()
 {
@@ -11,8 +21,11 @@ async function initServer()
 
 	const server = fastify();
 
+	server.register(fastifyCookie);
+	server.register(fastifyJwt, { secret: JWT_SECRET! });
 	server.register(prismaPlugin);
-	await server.register(User, { prefix: "/api"});
+	await server.register(User, { prefix: "/api/user"});
+	await server.register(auth, { prefix: "/auth"});
 
 	return server;
 }

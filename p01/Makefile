@@ -22,4 +22,3 @@ fclean: down
 	rm -rf pgdata
 	rm -rf ./srcs/generated
 	rm -rf ./srcs/node_modules
-	docker rm $(shell sudo docker ps -qa)
