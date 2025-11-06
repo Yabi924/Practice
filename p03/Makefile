@@ -1,4 +1,4 @@
-all: install up prisma r
+all: up install prisma r
 
 install: 
 	cd ./srcs && npm install
@@ -24,7 +24,7 @@ check:
 init:
 	cd ./srcs && npm install
 
-fclean: down
+fclean: down prismaclean
 	rm -rf pgdata
 	rm -rf ./srcs/generated
 	rm -rf ./srcs/node_modules

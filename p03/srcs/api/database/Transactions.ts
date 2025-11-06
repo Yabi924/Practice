@@ -18,7 +18,7 @@ export const transactions = (fastify: any) => {
             return res.code(200).send({transactions});
         }
         catch (e) {
-            console.error(e);
+            console.error("transaction/get", e);
             return res.code(500).send({ error: "Server internal error"});
         }
 
@@ -47,7 +47,52 @@ export const transactions = (fastify: any) => {
             return res.code(201).send({transaction});
         }
         catch (e) {
-            console.error(e);
+            console.error("transaction/post", e);
+            return res.code(500).send({ error: "Server internal error"});
+        }
+    });
+
+    fastify.put("/:id", async (req: any, res: any) => {
+        console.log("transaction: put");
+        const {token} = req.cookies;
+        if (!token)
+            return res.code(401).send({error: "No token"});
+
+        try {
+            const decoded = fastify.jwt.verify(token);
+
+            const { transactionId } = req.params;
+            if (!transactionId)
+                return res.code(400).send("No transactionId");
+            if (isNaN(transactionId))
+                return res.code(400).send({ error: "Invalid transactionId"});
+
+            const { amount, type, description } = req.body;
+            const data: {amount?: number, type?: string, description?: string} = {};
+
+            if (!amount && !type && !description) return res.code(400).send({ error: "No data to update"});
+            if (amount !== undefined) data.amount = amount;
+            if (type !== undefined) data.type = type;
+            if (description !== undefined) data.description = description;
+
+            const transaction = await fastify.prisma.findUnique({
+                where: {id: transactionId}
+            });
+
+            if (transaction.userId !== decoded.id)
+                return res.code(403).send({ error: "Permission denied"});
+
+            const updated = await fastify.prisma.transaction.update({
+                where: { id: transactionId},
+                data
+            })
+
+            return res.code(200).send({updated});
+        }
+        catch (e: any) {
+            console.error("transaction/put", e);
+            if (e.code === "P2025")
+                return res.code(404).send({ error: "Transaction not found" });
             return res.code(500).send({ error: "Server internal error"});
         }
     });
@@ -70,7 +115,7 @@ export const transactions = (fastify: any) => {
             res.code(200).send({success: true});
         }
         catch (e: any) {
-            console.error(e);
+            console.error("transaction/delete", e);
             if (e.code === "P2025")
                 return res.code(404).send({ error: "Transaction not found" });
             return res.code(500).send({ error: "Server internal error"});
