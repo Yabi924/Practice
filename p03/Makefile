@@ -24,7 +24,7 @@ check:
 init:
 	cd ./srcs && npm install
 
-fclean: down prismaclean
+fclean: prismaclean down 
 	rm -rf pgdata
 	rm -rf ./srcs/generated
 	rm -rf ./srcs/node_modules

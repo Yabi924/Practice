@@ -61,21 +61,21 @@ export const transactions = (fastify: any) => {
         try {
             const decoded = fastify.jwt.verify(token);
 
-            const { transactionId } = req.params;
+            const transactionId = Number(req.params.id);
             if (!transactionId)
-                return res.code(400).send("No transactionId");
+                return res.code(400).send("No transaction id");
             if (isNaN(transactionId))
-                return res.code(400).send({ error: "Invalid transactionId"});
+                return res.code(400).send({ error: "Invalid transaction id"});
 
             const { amount, type, description } = req.body;
             const data: {amount?: number, type?: string, description?: string} = {};
 
             if (!amount && !type && !description) return res.code(400).send({ error: "No data to update"});
-            if (amount !== undefined) data.amount = amount;
+            if (amount !== undefined) data.amount = parseFloat(amount);
             if (type !== undefined) data.type = type;
             if (description !== undefined) data.description = description;
 
-            const transaction = await fastify.prisma.findUnique({
+            const transaction = await fastify.prisma.transaction.findUnique({
                 where: {id: transactionId}
             });
 

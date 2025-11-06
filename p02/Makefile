@@ -28,4 +28,4 @@ fclean: down
 	rm -rf pgdata
 	rm -rf ./srcs/generated
 	rm -rf ./srcs/node_modules
-	rm -rf ./srcs/migrations
+	rm -rf ./srcs/prisma/migrations

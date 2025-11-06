@@ -15,18 +15,14 @@
 ## Practice
 
 **Route:**
-- `GET /transactions`: get transactions history
-- `POST /transactions`: upload transactions
-- `PUT/PATCH /transactions?id`: update transactions
-- `DELETE /transactions?id`: delete transactions
+- `GET /transaction`: get transaction history
+- `POST /transaction`: upload transaction
+- `PUT/PATCH /transaction/:id`: update transaction
+- `DELETE /transaction?id`: delete transaction
 
 ---
 
 ## Use
-
-### Setup (base on p01)
-
-<!-- - `/srcs/.env` -> `JWT_SECRET` -->
 
 ### Makefile
 - db & server start `make`
@@ -37,7 +33,10 @@
 ### Command
 
 #### New
-
+- Add transaction `curl -X POST -H "Cookie: token={token}" -H "Content-Type: application/json" -d '{"amount":"1","type":"income"}'  127.0.0.1:8080/transaction`
+- Delete `curl -X DELETE -H "Cookie: token={token}" 127.0.0.1:8080/transaction?id=1`
+- Update `curl -X PUT -H "Cookie: token={token}" -H "Content-Type: application/json" -d '{"amount":"10","type":"income","description":"Testing"}'  127.0.0.1:8080/transaction/1`
+- Get transactions list `curl -X GET -H "Cookie: token={token}" 127.0.0.1:8080/transaction`
 
 #### Previous
 - Register user `curl -X POST -H "Content-Type: application/json" -d '{"name":"name","email":"email","password":"password"}' 127.0.0.1:8080/auth/register`
@@ -50,10 +49,3 @@
 #### Deleted
 - create user `curl -X POST -H "Content-Type: application/json" -d '{"name":"name","email":"email@gmail.com"}' 127.0.0.1:8080/api/user/add`
 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzYyMzQ4OTg5LCJleHAiOjE3NjI5NTM3ODl9.6YigMhH5OZO7k0rWUVYjld2owrnfJH0aEWU0yewpoGg
-
-curl -X POST -H "Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzYyMzQ4OTg5LCJleHAiOjE3NjI5NTM3ODl9.6YigMhH5OZO7k0rWUVYjld2owrnfJH0aEWU0yewpoGg" -H "Content-Type: application/json" -d '{"amount":"17.0","type":"income"}'  127.0.0.1:8080/transaction
-
-curl -X GET -H "Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzYyMzQ4OTg5LCJleHAiOjE3NjI5NTM3ODl9.6YigMhH5OZO7k0rWUVYjld2owrnfJH0aEWU0yewpoGg" 127.0.0.1:8080/transaction
-
-curl -X DELETE -H "Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzYyMzQ4OTg5LCJleHAiOjE3NjI5NTM3ODl9.6YigMhH5OZO7k0rWUVYjld2owrnfJH0aEWU0yewpoGg" 127.0.0.1:8080/transaction?id=1
