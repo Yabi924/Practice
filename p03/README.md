@@ -15,7 +15,7 @@
 ## Practice
 
 **Route:**
-- `GET /transaction`: get transaction history
+- `GET /transaction`: get all transactions history
 - `POST /transaction`: upload transaction
 - `PUT/PATCH /transaction/:id`: update transaction
 - `DELETE /transaction?id`: delete transaction
