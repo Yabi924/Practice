@@ -49,7 +49,7 @@
 
 ##### Transaction
 - db gui tool `make check`
-- Add transaction `curl -X POST -H "Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzYyNTE4Mzk4LCJleHAiOjE3NjMxMjMxOTh9.5qkHyEzHU2uNH9fYQJgj43WSMpeTqUvz_hVfnwHEh4o" -H "Content-Type: application/json" -d '{"amount":"1","type":"income"}'  127.0.0.1:8080/transaction`
+- Add transaction `curl -X POST -H "Cookie: token={token}" -H "Content-Type: application/json" -d '{"amount":"1","type":"income"}'  127.0.0.1:8080/transaction`
 - Delete `curl -X DELETE -H "Cookie: token={token}" 127.0.0.1:8080/transaction?id=1`
 - Update `curl -X PUT -H "Cookie: token={token}" -H "Content-Type: application/json" -d '{"amount":"10","type":"income","description":"Testing"}'  127.0.0.1:8080/transaction/1`
 - Get transactions list `curl -X GET -H "Cookie: token={token}" 127.0.0.1:8080/transaction`
