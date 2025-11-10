@@ -1,4 +1,4 @@
-import Type, { Optional, Static } from "typebox";
+import Type, { Static } from "typebox";
 
 export const TransactionPostBody = Type.Object({
     amount: Type.Number(),

@@ -3,11 +3,11 @@ import { TransactionPostBody } from "../../schema/transaction.schema.ts";
 import { AppError } from "../../types/AppError.ts";
 
 export const transactions = (fastify: any) => {
-    fastify.get("/", async (req: any, res: any) => {
+    fastify.get("/", {
+        preHandle: [fastify.auth]
+    }, async (req: any, res: any) => {
         console.log("transaction: get");
         const {token} = req.cookies;
-        if (!token)
-            throw new AppError("No token", 401);
 
         const decoded = fastify.jwt.verify(token);
         const user: Prisma.UserCreateInput = await fastify.prisma.user.findUnique({
@@ -21,8 +21,9 @@ export const transactions = (fastify: any) => {
     })
 
     fastify.post("/", {
-        schema: { body: TransactionPostBody}
-    },async (req: any, res: any) => {
+        schema: { body: TransactionPostBody},
+        preHandle: [fastify.auth]
+    }, async (req: any, res: any) => {
         console.log("transaction: post");
         const {token} = req.cookies;
         if (!token)
@@ -44,11 +45,11 @@ export const transactions = (fastify: any) => {
         return res.code(201).send({transaction});
     });
 
-    fastify.put("/:id", async (req: any, res: any) => {
+    fastify.put("/:id", {
+        preHandle: [fastify.auth]
+    }, async (req: any, res: any) => {
         console.log("transaction: put");
         const {token} = req.cookies;
-        if (!token)
-            throw new AppError("No token", 401);
 
         try {
             const decoded = fastify.jwt.verify(token);
@@ -90,16 +91,24 @@ export const transactions = (fastify: any) => {
         }
     });
 
-    fastify.delete("/", async (req: any, res: any) => {
+    fastify.delete("/", {
+        preHandle: [fastify.auth]
+    }, async (req: any, res: any) => {
         console.log("transaction: delete");
         const {token} = req.cookies;
-        if (!token)
-            return res.code(401).send({error: "No token"});
 
         try {
+            const decoded = fastify.jwt.verify(token);
             const id = Number(req.query.id);
             if (!id || isNaN(id))
                 return res.code(400).send({ error: "Invalid ID"});
+
+            const transaction = await fastify.prisma.transaction.findUnique({
+                where: {id: id}
+            });
+
+            if (transaction.userId !== decoded.id)
+                throw fastify.httpErrors.forbidden("Permission denied");
 
             await fastify.prisma.transaction.delete({
                 where: {id: id}

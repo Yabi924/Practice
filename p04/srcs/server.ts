@@ -57,6 +57,10 @@ async function initServer()
 
 	server.register(fastifyCookie);
 	server.register(fastifyJwt, { secret: JWT_SECRET! });
+	server.decorate('auth', async (req: any, res: any) => {
+		await req.jwtVerify();
+	})
+
 	server.register(prismaPlugin);
 	await server.register(User, { prefix: "/api/user"});
 	await server.register(auth, { prefix: "/auth"});

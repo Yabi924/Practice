@@ -1,17 +1,14 @@
-import Schema from "typebox/schema";
 import { Prisma } from "../../generated/prisma/client.ts";
-import { Type } from "typebox";
 import { AppError } from "../../types/AppError.ts";
 
 // type: FastifyPluginAsync
 export const User = async (fastify: any) => {
-    fastify.get("/me", async (req: any, res: any) => {
+    fastify.get("/me", {
+        preHandle: [fastify.auth]
+    }, async (req: any, res: any) => {
         console.log("/me");
 
         const {token} = req.cookies;
-        if (!token)
-            throw new AppError("No token", 401);
-
         const decoded = fastify.jwt.verify(token);
         console.log(decoded);
 
