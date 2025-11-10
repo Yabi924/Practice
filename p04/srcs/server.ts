@@ -7,6 +7,8 @@ import fastifyCookie from "@fastify/cookie";
 import { auth } from "./api/auth.ts";
 import { transactions } from "./api/database/Transactions.ts";
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
+import { Prisma } from "./generated/prisma/client.ts";
+import { AppError } from "./types/AppError.ts";
 
 dotenv.config();
 
@@ -17,11 +19,41 @@ if (!JWT_SECRET)
 	process.exit(1);
 }
 
+function handlePrismaError(error: unknown)
+{
+	if (error instanceof Prisma.PrismaClientKnownRequestError)
+	{
+		switch (error.code)
+		{
+			case "P2025" :
+				return new AppError("", 400);
+			case "P2002" :
+				return new AppError(error.message, 409);
+		}
+	}
+	return error;
+}
+
+function errorHandler(error: any, req: any, res: any): void {
+	console.error("Server Throw: ", error);
+
+	if (error.code?.startsWith("P")) //prisma error
+		return res.code(400).send({
+			error: `Database Error: ${error.code}`
+	})
+
+	const status: number = error.statusCode || 500;
+	res.code(status).send({
+		error: error.message || "Server Internal Error"
+	})
+}
+
 async function initServer()
 {
 	console.log("Starting server...");
 
 	const server = fastify().withTypeProvider<TypeBoxTypeProvider>();
+	server.setErrorHandler(errorHandler);
 
 	server.register(fastifyCookie);
 	server.register(fastifyJwt, { secret: JWT_SECRET! });

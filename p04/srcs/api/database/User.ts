@@ -1,6 +1,7 @@
 import Schema from "typebox/schema";
 import { Prisma } from "../../generated/prisma/client.ts";
 import { Type } from "typebox";
+import { AppError } from "../../types/AppError.ts";
 
 // type: FastifyPluginAsync
 export const User = async (fastify: any) => {
@@ -9,43 +10,33 @@ export const User = async (fastify: any) => {
 
         const {token} = req.cookies;
         if (!token)
-            return res.code(401).send({error: "No token"});
+            throw new AppError("No token", 401);
 
-        try {
-            const decoded = fastify.jwt.verify(token);
-            console.log(decoded);
+        const decoded = fastify.jwt.verify(token);
+        console.log(decoded);
 
-            const user: Prisma.UserCreateInput = await fastify.prisma.user.findUnique({where: {id: decoded.id}});
-            const {name, email} = user;
-            const userData = {
-                id: decoded.id,
-                name: name,
-                email: email
-            }
-
-            res.code(200).send(userData);
+        const user: Prisma.UserCreateInput = await fastify.prisma.user.findUnique({where: {id: decoded.id}});
+        const {name, email} = user;
+        const userData = {
+            id: decoded.id,
+            name: name,
+            email: email
         }
-        catch (e) {
-            return res.code(500).send({error: "Server internal error"});
-        }
+
+        res.code(200).send({userData});
     })
 
     fastify.get("/all", async (req: any, res: any) => {
         console.log("/user/all")
-        try {
-            const users = await fastify.prisma.user.findMany({
-                select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                }
-            });
-            res.code(200).send(users);
-        }
-        catch (e){
-            console.error(e);
-            res.code(500).send({ error: "Server internal error"});
-        }
+
+        const users = await fastify.prisma.user.findMany({
+            select: {
+                id: true,
+                name: true,
+                email: true,
+            }
+        });
+        res.code(200).send(users);
     })
 
     fastify.delete("/delete", async (req: any, res: any) => {
@@ -53,18 +44,17 @@ export const User = async (fastify: any) => {
         try {
             const id = Number(req.query.id);
             if (isNaN(id))
-                return res.code(400).send({ error: "Invalid ID"});
+                throw fastify.httpErrors.badRequest("Invalid ID")
 
             await fastify.prisma.user.delete({where: { id } });
             console.log("deleted ", id);
             res.code(200).send();
         }
         catch (e: any) {
-            console.error(e);
             if (e.code === 'P2025')
-                res.code(404).send({ error: "User not found" });
+                throw new AppError("User not found", 404);
             else
-                res.code(500).send({ error: "Server internal error"});
+                throw e;
         }
     })
 }

@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { loginBody, registerBody, registerBodyType } from '../schema/index.schema.ts'
+import { AppError } from "../types/AppError.ts";
 
 export const auth = async (fastify: any) => {
     fastify.post("/register",{
@@ -29,41 +30,34 @@ export const auth = async (fastify: any) => {
             }); //201 create success
         }
         catch (e: any) {
-            console.error(e);
             if (e.code === 'P2002') //unique conflict
-                res.code(409).send({ error: "Email already Exists"});
+                throw new AppError("Email already Exists", 409);
             else
-                res.code(500).send({ error: "Server internal error"});
+                throw e;
         }
     })
 
     fastify.post("/login",{
         schema: {body: loginBody}
     }, async (req: any, res: any) => {
-        try {
-            const {email, password} = req.body;
-    
-            const user = await fastify.prisma.user.findUnique({where: {email}})
-            if (!user)
-                return req.code(401).send({error: "User not found"});
+        const {email, password} = req.body;
 
-            const match = await bcrypt.compare(password, user.password);
-            if (!match)
-                return req.code(401).send({error: "Invalid password"});
+        const user = await fastify.prisma.user.findUnique({where: {email}})
+        if (!user)
+            throw new AppError("User not found", 401);
 
-            const token = fastify.jwt.sign(
-                {id: user.id},
-                {expiresIn: "7d"}
-            );
-            res.setCookie("token", token, {
-                path: "/",
-            });
+        const match = await bcrypt.compare(password, user.password);
+        if (!match)
+            throw new AppError("Invalid password", 401);
 
-            return res.code(200).send({ success: true, token: token});
-        }
-        catch (e) {
-            console.error(e);
-            res.code(500).send({error: "Server internal error"});
-        }
+        const token = fastify.jwt.sign(
+            {id: user.id},
+            {expiresIn: "7d"}
+        );
+        res.setCookie("token", token, {
+            path: "/",
+        });
+
+        return res.code(200).send({token: token});
     });
 }
