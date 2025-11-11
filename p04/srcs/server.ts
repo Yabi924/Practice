@@ -19,21 +19,6 @@ if (!JWT_SECRET)
 	process.exit(1);
 }
 
-function handlePrismaError(error: unknown)
-{
-	if (error instanceof Prisma.PrismaClientKnownRequestError)
-	{
-		switch (error.code)
-		{
-			case "P2025" :
-				return new AppError("", 400);
-			case "P2002" :
-				return new AppError(error.message, 409);
-		}
-	}
-	return error;
-}
-
 function errorHandler(error: any, req: any, res: any): void {
 	console.error("Server Throw: ", error);
 

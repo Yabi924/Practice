@@ -1,6 +1,6 @@
 # Optimization & Secure
 
-**Target: Make my API more close Production**
+**Target: Make my API closer Production**
 
 ---
 
@@ -8,17 +8,15 @@
 
 - type checking (`@fastify/type-provider-typebox`)
 - Unified manage error handle (fastify.setErrorHandle())
-- Prisma migration / seed / transaction
+- Prisma seed
 
 ---
 
 ## Practice
 
-**Route:**
-- `GET /transaction`: get all transactions history
-- `POST /transaction`: upload transaction
-- `PUT/PATCH /transaction/:id`: update transaction
-- `DELETE /transaction?id`: delete transaction
+- Use fastify typebox to check body
+- Use fastify setErrorHandler to standardized response
+- Use Prisma seed to create default user account
 
 ---
 

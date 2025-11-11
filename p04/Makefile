@@ -1,4 +1,4 @@
-all: up install prisma r
+all: up install prisma prismaSeed r
 
 install: 
 	cd ./srcs && npm install
@@ -9,8 +9,11 @@ r:
 prisma:
 	cd ./srcs && npm run prisma
 
+prismaSeed:
+	cd ./srcs && npm run prismaSeed
+
 prismaclean:
-	cd ./srcs && npm run prismaclean
+	cd ./srcs && npm run prismaClean
 
 down:
 	docker compose down

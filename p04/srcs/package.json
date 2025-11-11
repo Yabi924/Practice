@@ -1,8 +1,12 @@
 {
   "type": "module",
+  "prisma": {
+    "seed": "npx ts-node prisma/seed.ts"
+  },
   "scripts": {
     "prisma": "npx prisma generate && npx prisma migrate dev --name init",
-    "prismaclean": "npx prisma migrate reset",
+    "prismaSeed": "npx prisma db seed",
+    "prismaClean": "npx prisma migrate reset",
     "dev": "tsx server.ts"
   },
   "include": [
