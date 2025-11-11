@@ -14,8 +14,10 @@
 
 ## Practice
 
+- Avoid not login user to access transaction api
 - Use fastify typebox to check body
 - Use fastify setErrorHandler to standardized response
+- Add `auth` decorator
 - Use Prisma seed to create default user account
 
 ---
