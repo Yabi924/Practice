@@ -6,7 +6,7 @@
 
 ## Learning point
 
-- React TypeScript (Vite) to handle frontend 
+- React TypeScript (Vite) to handle frontend
 - Frontend login status manage
 - Form & Sheet display
 
@@ -25,8 +25,9 @@
 ## Use
 
 ### Makefile
-- db & server start `make`
-- server off `ctrl+c`
+- init db & npm `make`
+- start frontend server `make frontend`
+- start backend server `make backend`
 - db off `make down`
 - db + server off + delete db `make fclean`
 

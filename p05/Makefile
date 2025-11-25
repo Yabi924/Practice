@@ -1,13 +1,10 @@
-all: up backend frontend
+all: up init
 
-backend: install prisma prismaSeed r
+backend: prisma prismaSeed
+	cd ./srcs/backend && npm run dev
 
 frontend:
-	cd ./srcs/frontend && npm install
 	cd ./srcs/frontend && npm run dev
-
-install: 
-	cd ./srcs/backend && npm install
 
 r:
 	cd ./srcs/backend && npm run dev
@@ -32,6 +29,7 @@ check:
 
 init:
 	cd ./srcs/backend && npm install
+	cd ./srcs/frontend && npm install
 
 fclean: prismaclean down 
 	rm -rf pgdata
